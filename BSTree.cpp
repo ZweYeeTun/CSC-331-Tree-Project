@@ -45,7 +45,7 @@ const BSTree<T> &  BSTree<T> :: operator= (const BSTree<T> & other)
           destroy (root);
        copy (root, other); 
    } 
-   
+
 }
 
 template <class T>
@@ -218,9 +218,9 @@ void BSTree<T> :: deleteNode (node<T> *& p )
             r = q;
             q = q->right;
          }  
-      
+
       p->info = q->info;
-      
+
       if ( r == NULL )
          p = p->left;
       else
@@ -228,5 +228,56 @@ void BSTree<T> :: deleteNode (node<T> *& p )
 
       delete q;
    }
-  
+
 }
+
+template <class T>
+int BSTree<T>::countUniqueWords() {
+    return countNodes(root);
+}
+
+template <class T>
+int BSTree<T>::countNodes(node<T> *p) {
+    if (p == NULL) return 0;
+    return 1 + countNodes(p->left) + countNodes(p->right);
+}
+
+template <class T>
+void BSTree<T>::printOverusedWords(int threshold, ofstream &out) {
+    printOverusedWordsHelper(root, threshold, out);
+}
+
+template <class T>
+void BSTree<T>::printOverusedWordsHelper(node<T> *p, int threshold, ofstream &out) {
+    if (p != NULL) {
+        printOverusedWordsHelper(p->left, threshold, out);
+        if (p->count > threshold) {
+            out << p->info << " (" << p->count << " times)\n";
+        }
+        printOverusedWordsHelper(p->right, threshold, out);
+    }
+}
+
+template <class T>
+void BSTree<T>::printIndex(ofstream &out) {
+    char currentLetter = '\0';
+    printIndexHelper(root, out, currentLetter);
+}
+
+template <class T>
+void BSTree<T>::printIndexHelper(node<T> *p, ofstream &out, char &currentLetter) {
+    if (p != NULL) {
+        printIndexHelper(p->left, out, currentLetter);
+
+        // Check if the first letter of the word has changed
+        if (p->info[0] != currentLetter) {
+            currentLetter = p->info[0];
+            out << "\n" << char(toupper(currentLetter)) << "\n";  // Print the new letter heading
+        }
+
+        out << p->info << "\n";  // Print the word
+        printIndexHelper(p->right, out, currentLetter);
+    }
+}
+
+
